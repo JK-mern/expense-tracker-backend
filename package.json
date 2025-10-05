@@ -1,0 +1,4 @@
+{
+  "name": "expense-tracker-backend",
+  "packageManager": "yarn@4.9.2"
+}
