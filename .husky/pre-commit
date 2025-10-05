@@ -1,0 +1,9 @@
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+if [ "$branch" = "main" ]; then
+  echo "❌ Cannot commit on main branch"
+  exit 1
+fi
+
+yarn lint-staged
