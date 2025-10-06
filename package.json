@@ -8,7 +8,11 @@
     "start": "node dist/server.js",
     "prepare": "husky",
     "lint": "eslint src/**/*.ts --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prirsma:migrate:create-only": "prisma migrate --create-only"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

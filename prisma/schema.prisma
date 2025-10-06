@@ -1,0 +1,71 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/lib/prisma/generated"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  userName       String    @unique @map("user_name")
+  currentBalance Decimal   @default(0.00) @db.Decimal(12, 2)
+  profilePicture String?   @map("profile_picture")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  balance        Balance[]
+  expenses       Expense[]
+
+  @@map("users")
+}
+
+model Balance {
+  id        String    @id @default(ulid())
+  userId    String
+  amount    Decimal   @db.Decimal(12, 2)
+  date      DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([userId, date])
+  @@map("balance")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  expenses Expense[]
+
+  @@map("category")
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  amount      Decimal  @db.Decimal(12, 2)
+  userId      String
+  categoryId  Int
+  description String
+  date        DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, date])
+  @@index([categoryId])
+  @@map("expenses")
+}
