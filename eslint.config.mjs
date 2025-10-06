@@ -22,6 +22,13 @@ export default tseslint.config(
     },
     rules: {
       'no-console': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   perfectionist.configs['recommended-natural'],
