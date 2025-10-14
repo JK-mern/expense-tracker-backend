@@ -2,6 +2,7 @@
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "user_name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "currentBalance" DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     "profile_picture" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -51,6 +52,9 @@ CREATE TABLE "expenses" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_user_name_key" ON "users"("user_name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE INDEX "balance_userId_date_idx" ON "balance"("userId", "date");
