@@ -1,6 +1,5 @@
 generator client {
   provider        = "prisma-client-js"
-  output          = "../src/lib/prisma/generated"
   previewFeatures = ["relationJoins"]
 }
 
@@ -13,6 +12,7 @@ datasource db {
 model User {
   id             String    @id @default(uuid())
   userName       String    @unique @map("user_name")
+  email          String    @unique
   currentBalance Decimal   @default(0.00) @db.Decimal(12, 2)
   profilePicture String?   @map("profile_picture")
   createdAt      DateTime  @default(now()) @map("created_at")
