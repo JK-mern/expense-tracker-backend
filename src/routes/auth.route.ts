@@ -22,5 +22,6 @@ export class AuthRoutes {
       '/checkUserExist',
       this.authController.checkUserExist,
     );
+    this.route.router.post('/createUser', this.authController.createUser);
   }
 }
