@@ -1,5 +1,6 @@
 import type {Application} from 'express';
 
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -29,6 +30,7 @@ export class App {
 
   private initializeMiddlewares() {
     this.app.use(express.json());
+    this.app.use(cors());
   }
 
   private initializeRoutes(routes: Route[]) {
