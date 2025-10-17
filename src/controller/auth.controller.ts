@@ -23,7 +23,7 @@ export class AuthContoller {
     _next: NextFunction,
   ) => {
     try {
-      const {email} = req.body as CheckUserExistType; //TODO : Add zod validation
+      const {email} = req.body as CheckUserExistType;
 
       const userExist = await this.prisma.user.findUnique({
         where: {
@@ -49,7 +49,7 @@ export class AuthContoller {
   ) => {
     try {
       const {currentBalance, email, id, profilePicture, userName} =
-        req.body as CreateUserType; //TODO : add-zod-validation
+        req.body as CreateUserType;
 
       const userNameExist = await this.prisma.user.findUnique({
         where: {
