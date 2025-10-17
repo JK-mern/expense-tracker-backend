@@ -5,9 +5,9 @@ export const checkUserExist = z.object({
 });
 
 export const createUser = z.object({
-  currentBalance: z.string(),
-  email: z.email(),
-  id: z.string(),
+  currentBalance: z.string('Current balance is required'),
+  email: z.email('Email is required'),
+  id: z.string('id is required'),
   profilePicture: z.string().optional(),
-  userName: z.string(),
+  userName: z.string('username is required'),
 });

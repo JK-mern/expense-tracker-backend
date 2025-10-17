@@ -6,7 +6,7 @@ import {Logger} from '../logger/logger.js';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class Validator {
   static logger = Logger.getInstance();
-  static validateSchema(schema: z4.ZodType) {
+  static validateSchema = (schema: z4.ZodType) => {
     return (req: Request, res: Response, next: NextFunction) => {
       const result = schema.safeParse(req.body);
 
@@ -25,5 +25,5 @@ export class Validator {
       req.body = result.data;
       next();
     };
-  }
+  };
 }
