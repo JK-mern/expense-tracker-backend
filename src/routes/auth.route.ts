@@ -4,7 +4,11 @@ import type {Route} from '../types/route.type.js';
 
 import {AuthContoller} from '../controller/auth.controller.js';
 import {Validator} from '../middlewares/validation.middleware.js';
-import {checkUserExist, createUser} from '../schemas/auth/auth.schema.js';
+import {
+  checkUserExist,
+  checkUserNameExist,
+  createUser,
+} from '../schemas/auth/auth.schema.js';
 
 export class AuthRoutes {
   public route: Route;
@@ -30,6 +34,11 @@ export class AuthRoutes {
       '/createUser',
       this.validate(createUser),
       this.authController.createUser,
+    );
+    this.route.router.post(
+      '/checkUserNameExist',
+      this.validate(checkUserNameExist),
+      this.authController.checkUsernameExist,
     );
   }
 }

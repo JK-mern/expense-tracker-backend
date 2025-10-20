@@ -5,6 +5,7 @@ import {PrismaClient} from '@prisma/client';
 import type {
   CheckUserExistType,
   CreateUserType,
+  UserNameExistType,
 } from '../schemas/auth/index.js';
 
 import {Logger} from '../logger/logger.js';
@@ -31,13 +32,35 @@ export class AuthContoller {
         },
       });
 
-      if (userExist) {
-        return res.status(409).json({data: {userExist: !!userExist}});
-      }
-
       res.status(200).json({data: {userExist: !!userExist}, success: true});
     } catch (error: unknown) {
       this.logger.error('Failed to check if user exist', error);
+      res.status(500).json({success: false});
+    }
+  };
+
+  public checkUsernameExist = async (
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    try {
+      const {userName} = req.body as UserNameExistType;
+
+      const isUserNameAvailable = await this.prisma.user.findUnique({
+        where: {
+          userName: userName,
+        },
+      });
+
+      res.status(200).json({
+        data: {
+          isUserNameAvailable: !!isUserNameAvailable,
+        },
+        success: true,
+      });
+    } catch (error) {
+      this.logger.error('Failed to check user name exist', error);
       res.status(500).json({success: false});
     }
   };
