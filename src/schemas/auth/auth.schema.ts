@@ -11,3 +11,7 @@ export const createUser = z.object({
   profilePicture: z.string().optional(),
   userName: z.string('username is required'),
 });
+
+export const checkUserNameExist = z.object({
+  userName: z.string('username is required'),
+});
