@@ -3,6 +3,7 @@ import {Router} from 'express';
 import type {Route} from '../types/route.type.js';
 
 import {AuthContoller} from '../controller/auth.controller.js';
+import {authMiddleware} from '../middlewares/auth-middleware.js';
 import {Validator} from '../middlewares/validation.middleware.js';
 import {
   checkUserExist,
@@ -33,6 +34,7 @@ export class AuthRoutes {
     this.route.router.post(
       '/createUser',
       this.validate(createUser),
+      authMiddleware,
       this.authController.createUser,
     );
     this.route.router.post(

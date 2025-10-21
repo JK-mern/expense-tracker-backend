@@ -55,7 +55,7 @@ export class AuthContoller {
 
       res.status(200).json({
         data: {
-          isUserNameAvailable: !!isUserNameAvailable,
+          isUserNameAvailable: !isUserNameAvailable,
         },
         success: true,
       });
@@ -71,8 +71,12 @@ export class AuthContoller {
     _next: NextFunction,
   ) => {
     try {
-      const {currentBalance, email, id, profilePicture, userName} =
+      const {currentBalance, profilePicture, userName} =
         req.body as CreateUserType;
+
+      if (!req.user?.id || !req.user.email) {
+        return res.status(400);
+      }
 
       const userNameExist = await this.prisma.user.findUnique({
         where: {
@@ -87,8 +91,8 @@ export class AuthContoller {
       await this.prisma.user.create({
         data: {
           currentBalance: currentBalance,
-          email: email,
-          id: id,
+          email: req.user.email,
+          id: req.user.id,
           profilePicture: profilePicture ?? null,
           userName: userName,
         },
