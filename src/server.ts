@@ -3,6 +3,7 @@ import {
   AuthRoutes,
   BalanceRoutes,
   CategoryRoute,
+  ExpenseRoute,
   UserRoute,
 } from './routes/index.js';
 
@@ -12,6 +13,7 @@ const routes = [
   new BalanceRoutes().route,
   new UserRoute().route,
   new CategoryRoute().route,
+  new ExpenseRoute().route,
 ];
 const app = new App(port, routes);
 app.listen();
