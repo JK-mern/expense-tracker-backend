@@ -26,5 +26,6 @@ export class CategoryRoute {
       this.validate(addCategorySchema),
       this.categoryController.addExpenseCategories,
     );
+    this.route.router.get('/', this.categoryController.getAllCategories);
   }
 }
