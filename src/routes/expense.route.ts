@@ -28,5 +28,10 @@ export class ExpenseRoute {
       authMiddleware,
       this.expenseController.createNewExpense,
     );
+    this.route.router.get(
+      '/history',
+      authMiddleware,
+      this.expenseController.getUserTransactionHistory,
+    );
   }
 }

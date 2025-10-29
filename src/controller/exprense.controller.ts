@@ -49,11 +49,63 @@ export class ExpenseController {
         data: {
           msg: 'new expense added successfully',
         },
-        status: true,
+        success: true,
       });
     } catch (error) {
       this.logger.error(error);
-      res.status(500).json({status: false});
+      res.status(500).json({success: false});
+    }
+  };
+
+  public getUserTransactionHistory = async (
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    try {
+      const categoryId = parseInt(req.query.categoryId as string) || undefined;
+      const skip = parseInt(req.query.skip as string) | 0;
+
+      if (!req.user?.id) {
+        return res.status(404).json({msg: 'unauthorized user'});
+      }
+
+      const offset = skip * 10;
+
+      const filteringCondition = {
+        userId: req.user.id,
+        ...(categoryId && {categoryId}),
+      };
+
+      const results = await this.prisma.expense.findMany({
+        orderBy: {
+          date: 'desc',
+        },
+        select: {
+          amount: true,
+          category: {
+            select: {
+              name: true,
+            },
+          },
+          date: true,
+        },
+        skip: offset,
+        take: 10,
+        where: filteringCondition,
+      });
+
+      const formattedResults = results.map((result) => ({
+        amount: result.amount,
+        categoryName: result.category.name,
+        data: result.date,
+      }));
+
+      res.status(200).json({data: formattedResults, success: true});
+    } catch (error) {
+      console.log(error);
+      this.logger.error(error);
+      res.status(500).json({success: false});
     }
   };
 }
