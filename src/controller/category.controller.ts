@@ -32,4 +32,23 @@ export class CategoryController {
       res.status(500).json();
     }
   };
+
+  public getAllCategories = async (
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    try {
+      const categories = await this.prisma.category.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+      res.status(200).json({categories, sucess: true});
+    } catch (error) {
+      this.logger.error(error);
+      res.status(500);
+    }
+  };
 }

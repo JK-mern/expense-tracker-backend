@@ -98,7 +98,7 @@ export class ExpenseController {
       const formattedResults = results.map((result) => ({
         amount: result.amount,
         categoryName: result.category.name,
-        data: result.date,
+        date: result.date,
       }));
 
       res.status(200).json({data: formattedResults, success: true});
