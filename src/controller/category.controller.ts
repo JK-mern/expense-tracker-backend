@@ -51,4 +51,45 @@ export class CategoryController {
       res.status(500);
     }
   };
+
+  public getCategoryWiseExpense = async (
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(404).json({msg: 'unauthorized user'});
+      }
+
+      const results = await this.prisma.expense.groupBy({
+        _sum: {
+          amount: true,
+        },
+        by: 'categoryId',
+        where: {
+          userId: req.user.id,
+        },
+      });
+
+      const categories = await this.prisma.category.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      const formattedResults = results.map((result) => ({
+        amount: result._sum.amount,
+        categoryName: categories.find(
+          (category) => category.id === result.categoryId,
+        )?.name,
+      }));
+
+      res.status(200).json({data: formattedResults, success: true});
+    } catch (error) {
+      this.logger.error(error);
+      res.status(500);
+    }
+  };
 }
