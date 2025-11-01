@@ -2,7 +2,10 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {PrismaClient} from '@prisma/client';
 
-import type {NewExpenseType} from '../schemas/expense/expense.dto.js';
+import type {
+  ExpenseFiltering,
+  NewExpenseType,
+} from '../schemas/expense/expense.dto.js';
 
 import {Logger} from '../logger/logger.js';
 
@@ -64,6 +67,7 @@ export class ExpenseController {
   ) => {
     try {
       const categoryId = parseInt(req.query.categoryId as string) || undefined;
+      const date = (req.query.date as string) || undefined;
       const skip = parseInt(req.query.skip as string) | 0;
 
       if (!req.user?.id) {
@@ -72,10 +76,23 @@ export class ExpenseController {
 
       const offset = skip * 10;
 
-      const filteringCondition = {
+      const filteringCondition: ExpenseFiltering = {
         userId: req.user.id,
         ...(categoryId && {categoryId}),
       };
+
+      if (date) {
+        const targetDate = new Date(date);
+        const startOfDay = new Date(targetDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(targetDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        filteringCondition.date = {
+          gte: startOfDay,
+          lt: endOfDay,
+        };
+      }
 
       const results = await this.prisma.expense.findMany({
         orderBy: {
@@ -89,6 +106,7 @@ export class ExpenseController {
             },
           },
           date: true,
+          id: true,
         },
         skip: offset,
         take: 10,
@@ -99,6 +117,7 @@ export class ExpenseController {
         amount: result.amount,
         categoryName: result.category.name,
         date: result.date,
+        id: result.id,
       }));
 
       res.status(200).json({data: formattedResults, success: true});
