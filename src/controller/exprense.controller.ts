@@ -68,13 +68,14 @@ export class ExpenseController {
     try {
       const categoryId = parseInt(req.query.categoryId as string) || undefined;
       const date = (req.query.date as string) || undefined;
-      const skip = parseInt(req.query.skip as string) | 0;
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = 10;
 
       if (!req.user?.id) {
         return res.status(404).json({msg: 'unauthorized user'});
       }
 
-      const offset = skip * 10;
+      const offset = (page - 1) * pageSize;
 
       const filteringCondition: ExpenseFiltering = {
         userId: req.user.id,
