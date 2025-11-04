@@ -27,12 +27,14 @@ export class ExpenseController {
         return res.status(404).json({msg: 'unauthorized user'});
       }
 
-      const {amount, categoryId, description} = req.body as NewExpenseType;
+      const {amount, categoryId, date, description} =
+        req.body as NewExpenseType;
       await this.prisma.$transaction([
         this.prisma.expense.create({
           data: {
             amount: amount,
             categoryId: categoryId,
+            date: new Date(date),
             description: description ?? '',
             userId: req.user.id,
           },
@@ -123,7 +125,6 @@ export class ExpenseController {
 
       res.status(200).json({data: formattedResults, success: true});
     } catch (error) {
-      console.log(error);
       this.logger.error(error);
       res.status(500).json({success: false});
     }
