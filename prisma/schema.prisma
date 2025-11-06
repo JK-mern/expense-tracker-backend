@@ -10,16 +10,17 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  userName       String    @unique @map("user_name")
-  email          String    @unique
-  currentBalance Decimal   @default(0.00) @db.Decimal(12, 2)
-  profilePicture String?   @map("profile_picture")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
-  balance        Balance[]
-  expenses       Expense[]
+  id                 String    @id @default(uuid())
+  userName           String    @unique @map("user_name")
+  email              String    @unique
+  currentBalance     Decimal   @default(0.00) @map("current_balance") @db.Decimal(12, 2)
+  profilePicture     String?   @map("profile_picture")
+  isProfileCompleted Boolean   @map("is_profile_completed")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+  balance            Balance[]
+  expenses           Expense[]
 
   @@map("users")
 }
