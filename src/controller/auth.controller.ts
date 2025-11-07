@@ -93,6 +93,7 @@ export class AuthContoller {
           currentBalance: currentBalance,
           email: req.user.email,
           id: req.user.id,
+          isProfileCompleted: true,
           profilePicture: profilePicture ?? null,
           userName: userName,
         },
