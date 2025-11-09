@@ -3,6 +3,8 @@ import type {NextFunction, Request, Response} from 'express';
 import {PrismaClient} from '@prisma/client';
 import {success} from 'zod';
 
+import type {UpdateBalanceType} from '../schemas/balance/index.js';
+
 import {Logger} from '../logger/logger.js';
 
 export class BalanceController {
@@ -44,5 +46,27 @@ export class BalanceController {
       this.logger.error(error);
       res.status(500);
     }
+  };
+
+  public updateCurrentBalance = async (
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    if (!req.user?.id) {
+      return res.status(404).json({msg: 'unauthorized user'});
+    }
+
+    const {balance} = req.body as UpdateBalanceType;
+    await this.prisma.user.update({
+      data: {
+        currentBalance: balance,
+      },
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    res.status(200).json({msg: 'balance updated successfully', success: true});
   };
 }

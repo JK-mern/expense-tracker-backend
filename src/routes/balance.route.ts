@@ -5,12 +5,12 @@ import type {Route} from '../types/route.type.js';
 import {BalanceController} from '../controller/balance.controller.js';
 import {authMiddleware} from '../middlewares/auth-middleware.js';
 import {Validator} from '../middlewares/validation.middleware.js';
+import {updateBalanceSchema} from '../schemas/balance/index.js';
 
 export class BalanceRoutes {
   public route: Route;
   private balanceController: BalanceController;
   private validate = Validator.validateSchema;
-
   constructor() {
     this.route = {
       basePath: 'balance',
@@ -25,6 +25,12 @@ export class BalanceRoutes {
       '/currentBalance',
       authMiddleware,
       this.balanceController.getCurrentBalance,
+    );
+    this.route.router.post(
+      '/updateBalance',
+      authMiddleware,
+      this.validate(updateBalanceSchema),
+      this.balanceController.updateCurrentBalance,
     );
   }
 }
