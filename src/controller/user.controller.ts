@@ -26,6 +26,7 @@ export class UserController {
 
       const userInfo = await this.prismaClient.user.findUnique({
         select: {
+          currentBalance: true,
           email: true,
           isProfileCompleted: true,
           profilePicture: true,
