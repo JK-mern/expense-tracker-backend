@@ -15,7 +15,7 @@ interface HandleError {
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ErrorHandler {
-  static handleError({err, next: _next, req: _req, res}: HandleError) {
+  static handleError = ({err, next: _next, req: _req, res}: HandleError) => {
     const logger = Logger.getInstance();
 
     logger.error(err.message);
@@ -27,5 +27,7 @@ export class ErrorHandler {
       status,
       success: false,
     });
-  }
+  };
 }
+
+export const errorMiddleware = ErrorHandler.handleError;
