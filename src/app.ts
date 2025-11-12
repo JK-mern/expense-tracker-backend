@@ -7,6 +7,7 @@ import express from 'express';
 import type {Route} from './types/route.type.js';
 
 import {Logger} from './logger/logger.js';
+import {errorMiddleware} from './middlewares/error.middleware.js';
 
 dotenv.config();
 
@@ -20,12 +21,17 @@ export class App {
     this.port = port;
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
+    this.initializeErrorHandling();
   }
 
   public listen() {
     this.app.listen(this.port, () => {
       this.logger.info(`server started on port : ${this.port.toString()}`);
     });
+  }
+
+  private initializeErrorHandling() {
+    this.app.use(errorMiddleware);
   }
 
   private initializeMiddlewares() {
