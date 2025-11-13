@@ -53,20 +53,27 @@ export class BalanceController {
     res: Response,
     _next: NextFunction,
   ) => {
-    if (!req.user?.id) {
-      return res.status(404).json({msg: 'unauthorized user'});
+    try {
+      if (!req.user?.id) {
+        return res.status(404).json({msg: 'unauthorized user'});
+      }
+
+      const {balance} = req.body as UpdateBalanceType;
+      await this.prisma.user.update({
+        data: {
+          currentBalance: balance,
+        },
+        where: {
+          id: req.user.id,
+        },
+      });
+
+      res
+        .status(200)
+        .json({msg: 'balance updated successfully', success: true});
+    } catch (error) {
+      this.logger.error(error);
+      res.status(500);
     }
-
-    const {balance} = req.body as UpdateBalanceType;
-    await this.prisma.user.update({
-      data: {
-        currentBalance: balance,
-      },
-      where: {
-        id: req.user.id,
-      },
-    });
-
-    res.status(200).json({msg: 'balance updated successfully', success: true});
   };
 }
