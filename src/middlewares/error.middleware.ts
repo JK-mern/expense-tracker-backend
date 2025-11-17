@@ -2,7 +2,7 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {Logger} from '../logger/logger.js';
 
-type AppError = Error & {
+export type AppError = Error & {
   status?: number;
 };
 

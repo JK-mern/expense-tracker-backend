@@ -2,6 +2,7 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {PrismaClient} from '@prisma/client';
 
+import type {AppError} from '../middlewares/error.middleware.js';
 import type {
   CheckUserExistType,
   CreateUserType,
@@ -21,7 +22,7 @@ export class AuthContoller {
   public checkUserExist = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const {email} = req.body as CheckUserExistType;
@@ -34,15 +35,14 @@ export class AuthContoller {
 
       res.status(200).json({data: {userExist: !!userExist}, success: true});
     } catch (error: unknown) {
-      this.logger.error('Failed to check if user exist', error);
-      res.status(500).json({success: false});
+      next(error);
     }
   };
 
   public checkUsernameExist = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const {userName} = req.body as UserNameExistType;
@@ -60,22 +60,23 @@ export class AuthContoller {
         success: true,
       });
     } catch (error) {
-      this.logger.error('Failed to check user name exist', error);
-      res.status(500).json({success: false});
+      next(error);
     }
   };
 
   public createUser = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const {currentBalance, profilePicture, userName} =
         req.body as CreateUserType;
 
       if (!req.user?.id || !req.user.email) {
-        return res.status(400);
+        const error: AppError = new Error('Unauthorized');
+        error.status = 400;
+        throw error;
       }
 
       const userNameExist = await this.prisma.user.findUnique({
@@ -85,7 +86,9 @@ export class AuthContoller {
       });
 
       if (userNameExist) {
-        return res.status(409).json({data: {userNameExist: true}});
+        const error: AppError = new Error('Username exists');
+        error.status = 409;
+        throw error;
       }
 
       await this.prisma.user.create({
@@ -101,8 +104,7 @@ export class AuthContoller {
 
       res.status(201).json({success: true});
     } catch (error: unknown) {
-      this.logger.error('Failed to create new user', error);
-      res.status(500).json({success: false});
+      next(error);
     }
   };
 }
