@@ -3,6 +3,7 @@ import type {NextFunction, Request, Response} from 'express';
 import {PrismaClient} from '@prisma/client';
 import {success} from 'zod';
 
+import type {AppError} from '../middlewares/error.middleware.js';
 import type {UpdateBalanceType} from '../schemas/balance/index.js';
 
 import {Logger} from '../logger/logger.js';
@@ -18,13 +19,15 @@ export class BalanceController {
   public getCurrentBalance = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const userId = req.user?.id;
 
       if (!userId) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Un authorized');
+        error.status = 404;
+        throw error;
       }
 
       const userBalance = await this.prisma.user.findUnique({
@@ -43,19 +46,20 @@ export class BalanceController {
         status: success,
       });
     } catch (error) {
-      this.logger.error(error);
-      res.status(500);
+      next(error);
     }
   };
 
   public updateCurrentBalance = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       if (!req.user?.id) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Unauthorized user');
+        error.status = 404;
+        throw error;
       }
 
       const {balance} = req.body as UpdateBalanceType;
@@ -72,8 +76,7 @@ export class BalanceController {
         .status(200)
         .json({msg: 'balance updated successfully', success: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500);
+      next(error);
     }
   };
 }
