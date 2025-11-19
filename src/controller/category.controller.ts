@@ -2,6 +2,7 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {PrismaClient} from '@prisma/client';
 
+import type {AppError} from '../middlewares/error.middleware.js';
 import type {AddCategory} from '../schemas/category/category.dto.js';
 
 import {Logger} from '../logger/logger.js';
@@ -17,7 +18,7 @@ export class CategoryController {
   public addExpenseCategories = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const {categoryName} = req.body as AddCategory;
@@ -28,15 +29,14 @@ export class CategoryController {
       });
       res.status(200).json({status: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500).json();
+      next(error);
     }
   };
 
   public getAllCategories = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const categories = await this.prisma.category.findMany({
@@ -47,19 +47,20 @@ export class CategoryController {
       });
       res.status(200).json({categories, sucess: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500);
+      next(error);
     }
   };
 
   public getCategoryWiseExpense = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       if (!req.user?.id) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Unauthorized');
+        error.status = 400;
+        throw error;
       }
 
       const results = await this.prisma.expense.groupBy({
@@ -88,8 +89,7 @@ export class CategoryController {
 
       res.status(200).json({data: formattedResults, success: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500);
+      next(error);
     }
   };
 }
