@@ -5,10 +5,7 @@ import {PrismaClient} from '@prisma/client';
 import type {AppError} from '../middlewares/error.middleware.js';
 import type {AddCategory} from '../schemas/category/category.dto.js';
 
-import {Logger} from '../logger/logger.js';
-
 export class CategoryController {
-  private logger = Logger.getInstance();
   private prisma: PrismaClient;
 
   constructor() {

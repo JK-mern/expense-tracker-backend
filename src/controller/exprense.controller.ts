@@ -2,15 +2,13 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {PrismaClient} from '@prisma/client';
 
+import type {AppError} from '../middlewares/error.middleware.js';
 import type {
   ExpenseFiltering,
   NewExpenseType,
 } from '../schemas/expense/expense.dto.js';
 
-import {Logger} from '../logger/logger.js';
-
 export class ExpenseController {
-  private logger = Logger.getInstance();
   private prisma: PrismaClient;
 
   constructor() {
@@ -20,11 +18,13 @@ export class ExpenseController {
   public createNewExpense = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       if (!req.user?.id) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Unauthorized');
+        error.status = 400;
+        throw error;
       }
 
       const {amount, categoryId, date, description} =
@@ -57,15 +57,14 @@ export class ExpenseController {
         success: true,
       });
     } catch (error) {
-      this.logger.error(error);
-      res.status(500).json({success: false});
+      next(error);
     }
   };
 
   public getUserTransactionHistory = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const categoryId = parseInt(req.query.categoryId as string) || undefined;
@@ -74,7 +73,9 @@ export class ExpenseController {
       const pageSize = 10;
 
       if (!req.user?.id) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Unauthorized');
+        error.status = 400;
+        throw error;
       }
 
       const offset = (page - 1) * pageSize;
@@ -125,8 +126,7 @@ export class ExpenseController {
 
       res.status(200).json({data: formattedResults, success: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500).json({success: false});
+      next(error);
     }
   };
 }

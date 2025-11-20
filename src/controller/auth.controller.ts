@@ -9,10 +9,7 @@ import type {
   UserNameExistType,
 } from '../schemas/auth/index.js';
 
-import {Logger} from '../logger/logger.js';
-
 export class AuthContoller {
-  private logger = Logger.getInstance();
   private prisma: PrismaClient;
 
   constructor() {
