@@ -6,10 +6,7 @@ import {success} from 'zod';
 import type {AppError} from '../middlewares/error.middleware.js';
 import type {UpdateBalanceType} from '../schemas/balance/index.js';
 
-import {Logger} from '../logger/logger.js';
-
 export class BalanceController {
-  private logger = Logger.getInstance();
   private prisma: PrismaClient;
 
   constructor() {
