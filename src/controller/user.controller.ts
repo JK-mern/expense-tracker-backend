@@ -2,10 +2,9 @@ import type {NextFunction, Request, Response} from 'express';
 
 import {PrismaClient} from '@prisma/client';
 
-import {Logger} from '../logger/logger.js';
+import type {AppError} from '../middlewares/error.middleware.js';
 
 export class UserController {
-  private logger = Logger.getInstance();
   private prismaClient: PrismaClient;
 
   constructor() {
@@ -15,13 +14,15 @@ export class UserController {
   public getCurrentUserDetails = async (
     req: Request,
     res: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
     try {
       const userId = req.user?.id;
 
       if (!userId) {
-        return res.status(404).json({msg: 'unauthorized user'});
+        const error: AppError = new Error('Unauthorized');
+        error.status = 400;
+        throw error;
       }
 
       const userInfo = await this.prismaClient.user.findUnique({
@@ -39,8 +40,7 @@ export class UserController {
 
       res.status(200).json({data: userInfo, status: true});
     } catch (error) {
-      this.logger.error(error);
-      res.status(500).json({status: false});
+      next(error);
     }
   };
 }
