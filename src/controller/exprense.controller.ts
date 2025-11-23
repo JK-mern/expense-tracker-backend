@@ -27,29 +27,43 @@ export class ExpenseController {
         throw error;
       }
 
+      const userId = req.user.id;
+
       const {amount, categoryId, date, description} =
         req.body as NewExpenseType;
-      await this.prisma.$transaction([
-        this.prisma.expense.create({
+
+      await this.prisma.$transaction(async (tx) => {
+        await tx.expense.create({
           data: {
-            amount: amount,
-            categoryId: categoryId,
+            amount,
+            categoryId,
             date: new Date(date),
             description: description ?? '',
-            userId: req.user.id,
+            userId: userId,
           },
-        }),
-        this.prisma.user.update({
+        });
+
+        const updatedUser = await tx.user.update({
           data: {
             currentBalance: {
               decrement: amount,
             },
           },
-          where: {
-            id: req.user.id,
+          select: {
+            currentBalance: true,
           },
-        }),
-      ]);
+          where: {id: userId},
+        });
+
+        await tx.balance.create({
+          data: {
+            amount: updatedUser.currentBalance,
+            date: new Date(date),
+            userId: userId,
+          },
+        });
+      });
+
       res.status(200).json({
         data: {
           msg: 'new expense added successfully',
