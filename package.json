@@ -12,7 +12,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prirsma:migrate:create-only": "prisma migrate --create-only"
+    "prisma:migrate:create-only": "prisma migrate dev --create-only"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

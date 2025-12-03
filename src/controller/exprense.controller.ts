@@ -33,16 +33,6 @@ export class ExpenseController {
         req.body as NewExpenseType;
 
       await this.prisma.$transaction(async (tx) => {
-        await tx.expense.create({
-          data: {
-            amount,
-            categoryId,
-            date: new Date(date),
-            description: description ?? '',
-            userId: userId,
-          },
-        });
-
         const updatedUser = await tx.user.update({
           data: {
             currentBalance: {
@@ -55,10 +45,21 @@ export class ExpenseController {
           where: {id: userId},
         });
 
-        await tx.balance.create({
+        const balance = await tx.balance.create({
           data: {
             amount: updatedUser.currentBalance,
             date: new Date(date),
+            userId: userId,
+          },
+        });
+
+        await tx.expense.create({
+          data: {
+            amount,
+            balanceId: balance.id,
+            categoryId,
+            date: new Date(date),
+            description: description ?? '',
             userId: userId,
           },
         });
@@ -118,14 +119,21 @@ export class ExpenseController {
         },
         select: {
           amount: true,
+          balance: {
+            select: {
+              amount: true,
+            },
+          },
           category: {
             select: {
               name: true,
             },
           },
           date: true,
+          description: true,
           id: true,
         },
+
         skip: offset,
         take: 10,
         where: filteringCondition,
@@ -133,8 +141,10 @@ export class ExpenseController {
 
       const formattedResults = results.map((result) => ({
         amount: result.amount,
+        balanceAmount: result.balance.amount,
         categoryName: result.category.name,
         date: result.date,
+        description: result.description,
         id: result.id,
       }));
 

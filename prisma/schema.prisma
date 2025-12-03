@@ -34,6 +34,7 @@ model Balance {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  expenses  Expense[]
 
   @@index([userId, date])
   @@map("balance")
@@ -59,12 +60,12 @@ model Expense {
   categoryId  Int
   description String
   date        DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  balanceId   String
+  user        User     @relation(fields: [userId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+  balance     Balance  @relation(fields: [balanceId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@index([userId, date])
   @@index([categoryId])
