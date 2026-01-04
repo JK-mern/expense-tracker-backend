@@ -3,8 +3,8 @@
   "packageManager": "yarn@4.9.2",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc && prisma generate",
+    "dev": "tsx src/config/env.ts &&  tsx watch src/server.ts",
+    "build": "tsx src/config/env.ts && tsc && prisma generate",
     "start": "node dist/server.js",
     "prepare": "husky",
     "lint": "eslint src/**/*.ts --fix",

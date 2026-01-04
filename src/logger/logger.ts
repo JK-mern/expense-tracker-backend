@@ -3,6 +3,8 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import * as winston from 'winston';
 
+import {env} from '../config/env.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -39,7 +41,7 @@ export class Logger {
         ],
       });
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (env.NODE_ENV !== 'production') {
         this.winstonInstance.add(
           new winston.transports.Console({
             format: winston.format.printf(({level, message}) => {

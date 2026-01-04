@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {createClient} from '@supabase/supabase-js';
 
+import {env} from '../../config/env.js';
+
 export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  env.SUPABASE_URL,
+  env.SUPABASE_SERVICE_ROLE_KEY,
 );

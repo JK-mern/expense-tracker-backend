@@ -1,15 +1,12 @@
 import type {Application} from 'express';
 
 import cors from 'cors';
-import dotenv from 'dotenv';
 import express from 'express';
 
 import type {Route} from './types/route.type.js';
 
 import {Logger} from './logger/logger.js';
 import {errorMiddleware} from './middlewares/error.middleware.js';
-
-dotenv.config();
 
 export class App {
   public app: Application;
