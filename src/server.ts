@@ -1,4 +1,5 @@
 import {App} from './app.js';
+import {env} from './config/env.js';
 import {
   AuthRoutes,
   BalanceRoutes,
@@ -7,7 +8,7 @@ import {
   UserRoute,
 } from './routes/index.js';
 
-const port = process.env.PORT ? Number(process.env.PORT) : 3500;
+const port = env.PORT;
 const routes = [
   new AuthRoutes().route,
   new BalanceRoutes().route,
