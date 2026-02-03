@@ -1,13 +1,11 @@
 import type {NextFunction, Request, Response} from 'express';
-
 import {PrismaClient} from '@prisma/client';
-
-import type {AppError} from '../middlewares/error.middleware.js';
+import type {AppError} from '../../middlewares/error.middleware.js';
 import type {
   CheckUserExistType,
   CreateUserType,
   UserNameExistType,
-} from '../schemas/auth/index.js';
+} from '../../schemas/auth/index.js';
 
 export class AuthContoller {
   private prisma: PrismaClient;
