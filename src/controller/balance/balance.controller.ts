@@ -1,11 +1,7 @@
-import type {NextFunction, Request, Response} from 'express';
-
 import {PrismaClient} from '@prisma/client';
-import {success} from 'zod';
-
-import type {AppError} from '../middlewares/error.middleware.js';
-import type {UpdateBalanceType} from '../schemas/balance/index.js';
-
+import type {NextFunction, Request, Response} from 'express';
+import type {AppError} from '../../middlewares/error.middleware.js';
+import type {UpdateBalanceType} from '../../schemas/balance/index.js';
 export class BalanceController {
   private prisma: PrismaClient;
 
@@ -22,8 +18,8 @@ export class BalanceController {
       const userId = req.user?.id;
 
       if (!userId) {
-        const error: AppError = new Error('Un authorized');
-        error.status = 404;
+        const error: AppError = new Error('Unauthorized');
+        error.status = 401;
         throw error;
       }
 
@@ -40,7 +36,7 @@ export class BalanceController {
         data: {
           balance: userBalance?.currentBalance,
         },
-        status: success,
+        success: true,
       });
     } catch (error) {
       next(error);
@@ -55,7 +51,7 @@ export class BalanceController {
     try {
       if (!req.user?.id) {
         const error: AppError = new Error('Unauthorized user');
-        error.status = 404;
+        error.status = 401;
         throw error;
       }
 

@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type {NextFunction, Request, Response} from 'express';
-
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {getMockReq, getMockRes} from 'vitest-mock-express';
-
 import {prismaMock} from '../../test/mocks/mock-primsa-client.js';
 import {AuthContoller} from './auth.controller.js';
 import {MockUser} from './mock-auth.js';
@@ -142,7 +140,7 @@ describe('AuthController', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Unauthorized',
-          status: 400,
+          status: 401,
         }),
       );
     });
