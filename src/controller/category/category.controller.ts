@@ -1,9 +1,7 @@
 import type {NextFunction, Request, Response} from 'express';
-
 import {PrismaClient} from '@prisma/client';
-
-import type {AppError} from '../middlewares/error.middleware.js';
-import type {AddCategory} from '../schemas/category/category.dto.js';
+import type {AppError} from '../../middlewares/error.middleware.js';
+import type {AddCategory} from '../../schemas/category/category.dto.js';
 
 export class CategoryController {
   private prisma: PrismaClient;
@@ -24,7 +22,7 @@ export class CategoryController {
           name: categoryName,
         },
       });
-      res.status(200).json({status: true});
+      res.status(200).json({success: true});
     } catch (error) {
       next(error);
     }
@@ -42,7 +40,7 @@ export class CategoryController {
           name: true,
         },
       });
-      res.status(200).json({categories, sucess: true});
+      res.status(200).json({categories, success: true});
     } catch (error) {
       next(error);
     }
@@ -56,7 +54,7 @@ export class CategoryController {
     try {
       if (!req.user?.id) {
         const error: AppError = new Error('Unauthorized');
-        error.status = 400;
+        error.status = 401;
         throw error;
       }
 
