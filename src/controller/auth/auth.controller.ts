@@ -1,5 +1,5 @@
-import type {NextFunction, Request, Response} from 'express';
 import {PrismaClient} from '@prisma/client';
+import type {NextFunction, Request, Response} from 'express';
 import type {AppError} from '../../middlewares/error.middleware.js';
 import type {
   CheckUserExistType,
@@ -70,7 +70,7 @@ export class AuthContoller {
 
       if (!req.user?.id || !req.user.email) {
         const error: AppError = new Error('Unauthorized');
-        error.status = 400;
+        error.status = 401;
         throw error;
       }
 
