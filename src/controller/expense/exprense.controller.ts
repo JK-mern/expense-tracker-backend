@@ -1,12 +1,10 @@
 import type {NextFunction, Request, Response} from 'express';
-
 import {PrismaClient} from '@prisma/client';
-
-import type {AppError} from '../middlewares/error.middleware.js';
+import type {AppError} from '../../middlewares/error.middleware.js';
 import type {
   ExpenseFiltering,
   NewExpenseType,
-} from '../schemas/expense/expense.dto.js';
+} from '../../schemas/expense/expense.dto.js';
 
 export class ExpenseController {
   private prisma: PrismaClient;
@@ -23,7 +21,7 @@ export class ExpenseController {
     try {
       if (!req.user?.id) {
         const error: AppError = new Error('Unauthorized');
-        error.status = 400;
+        error.status = 401;
         throw error;
       }
 
@@ -89,7 +87,7 @@ export class ExpenseController {
 
       if (!req.user?.id) {
         const error: AppError = new Error('Unauthorized');
-        error.status = 400;
+        error.status = 401;
         throw error;
       }
 
