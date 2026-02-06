@@ -1,29 +1,27 @@
 import type {NextFunction, Request, Response} from 'express';
-
 import {Logger} from '../logger/logger.js';
 
 export type AppError = Error & {
   status?: number;
 };
 
-interface HandleError {
-  err: AppError;
-  next: NextFunction;
-  req: Request;
-  res: Response;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ErrorHandler {
-  static handleError = ({err, next: _next, req: _req, res}: HandleError) => {
+  static handleError = (
+    err: AppError,
+    _req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
     const logger = Logger.getInstance();
 
-    logger.error(err.message);
-
+    const message = err.message;
     const status = err.status ?? 500;
 
+    logger.error(message);
+
     res.status(status).json({
-      message: err.message,
+      message,
       status,
       success: false,
     });
