@@ -1,10 +1,7 @@
 import dotenv from 'dotenv';
 import {z} from 'zod';
 
-import {Logger} from '../logger/logger.js';
-
 dotenv.config();
-
 const NODE_ENV = ['development', 'production'];
 
 const envSchema = z.object({
@@ -19,10 +16,8 @@ const envSchema = z.object({
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
-  Logger.getInstance().log(
-    'Invalid environment variables :',
-    z.prettifyError(_env.error),
-  );
+  const formattedError = z.prettifyError(_env.error);
+  console.error('Invalid environment variables', formattedError);
   process.exit(1);
 }
 
