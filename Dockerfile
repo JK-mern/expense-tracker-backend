@@ -1,53 +1,50 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS base
 
-WORKDIR /expense-tracker-backend
+WORKDIR /app
 
 RUN corepack enable
 
-ENV YARN_NODE_LINKER=node-modules
+FROM base as deps
 
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 
-COPY .yarnrc.yml ./
+RUN yarn install --immutable
+
+FROM deps AS builder
 
 COPY prisma ./prisma
+COPY tsconfig.json ./
+COPY src ./src
 
-RUN yarn install --frozen-lockfile
+RUN yarn prisma generate
+RUN yarn tsc
 
-RUN yarn  prisma generate
+FROM deps as prod-deps
 
-COPY . .
+COPY package.json yarn.lock .yarnrc.yml ./
 
-RUN yarn build
+RUN yarn workspaces focus --all --production
 
-FROM node:20-alpine AS runner
 
-WORKDIR /expense-tracker-backend
+FROM node:22-alpine AS runner
+
+WORKDIR /app
 
 RUN corepack enable
 
-ENV NODE_ENV=''
-ENV PORT=''
-ENV DATABASE_URL=''
-ENV DIRECT_URL=''
-ENV SUPABASE_URL=''
-ENV SUPABASE_SERVICE_ROLE_KEY=''
+
+RUN mkdir -p /app/logs && chown -R node:node /app
+
+# Copy only necessary outputs
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY package.json ./
 
 
-ENV YARN_NODE_LINKER=node-modules
 
-COPY package.json yarn.lock ./
-
-COPY .yarnrc.yml ./
-
-RUN yarn workspaces focus --all --production 
-
-COPY --from=builder /expense-tracker-backend/dist ./dist
-COPY --from=builder /expense-tracker-backend/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /expense-tracker-backend/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /expense-tracker-backend/prisma ./prisma
-
-
+USER node
 EXPOSE 3500
-
 CMD ["node", "dist/server.js"]

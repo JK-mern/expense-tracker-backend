@@ -1,0 +1,15 @@
+.git
+.gitignore
+.github
+.vscode
+
+node_modules
+dist
+logs
+
+.env
+.env.*
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
