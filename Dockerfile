@@ -8,8 +8,6 @@ FROM base as deps
 
 COPY package.json yarn.lock .yarnrc.yml ./
 
-COPY .yarn ./.yarn
-
 RUN yarn install --immutable
 
 FROM deps AS builder
@@ -24,7 +22,6 @@ RUN yarn tsc
 FROM deps as prod-deps
 
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
 
 RUN yarn workspaces focus --all --production
 
