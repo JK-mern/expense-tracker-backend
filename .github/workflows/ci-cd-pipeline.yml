@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  IMAGE_NAME: ghcr.io/jk-mern/expense-tracker-backend
   CONTAINER_NAME: expense-tracker-backend
   CONTAINER_PORT: '3500'
 
