@@ -110,7 +110,7 @@ jobs:
     - name: Apply pending migrations to database
       run: yarn prisma:migrate:deploy
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
     - name: Deploy over SSH
       uses: appleboy/ssh-action@v1.2.0
